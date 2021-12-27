@@ -1,60 +1,39 @@
-use std::io::{BufWriter, Write};
 use sudachi::analysis::morpheme::Morpheme;
 use sudachi::analysis::stateless_tokenizer::DictionaryAccess;
-
 use sudachi::prelude::{MorphemeList, SudachiResult};
 
-pub trait SudachiOutput<T> {
-    fn write(&mut self, morphemes: &MorphemeList<T>) -> SudachiResult<()>;
-    fn flush(&mut self);
-}
+use super::output::{SudachiOutput};
+
+use std::io::{BufWriter, Write};
 
 type Writer = BufWriter<Box<dyn Write>>;
 
-pub struct Simple {
+pub struct Console {
     print_all: bool,
     writer: Writer,
 }
-impl Simple {
+impl Console {
     pub fn new(print_all: bool, inner_writer: Box<dyn Write>) -> Self {
-        Simple {
+        Console {
             print_all,
             writer: BufWriter::new(inner_writer),
         }
     }
 }
-impl<T: DictionaryAccess> SudachiOutput<T> for Simple {
+impl<T: DictionaryAccess> SudachiOutput<T> for Console {
     fn write(&mut self, morphemes: &MorphemeList<T>) -> SudachiResult<()> {
         for m in morphemes.iter() {
             write_morpheme_basic(&mut self.writer, &m)?;
             if self.print_all {
                 write_morpheme_extended(&mut self.writer, &m)?
             }
-            self.writer.write_all(b"\n")?;
+            self.writer.write_all(b"\n\r")?;
         }
-        self.writer.write_all(b"EOS\n")?;
+        self.writer.write_all(b"EOS\n\r")?;
         Ok(())
     }
     fn flush(&mut self) {
         self.writer.flush().expect("flush failed");
-    }
-}
-
-pub struct Nifs {
-    env: u32,
-}
-impl Nifs {
-    pub fn new(env: u32) -> Nifs {
-        Nifs {
-            env,
-        }
-    }
-}
-impl<T: DictionaryAccess> SudachiOutput<T> for Nifs {
-    fn write(&mut self, morphemes: &MorphemeList<T>) -> SudachiResult<()> {
-        Ok(())
-    }
-    fn flush(&mut self) {
     }
 }
 

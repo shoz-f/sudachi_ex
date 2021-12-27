@@ -1,10 +1,10 @@
-use crate::output::{SudachiOutput};
-
 use sudachi::analysis::stateful_tokenizer::StatefulTokenizer;
 use sudachi::analysis::stateless_tokenizer::DictionaryAccess;
 use sudachi::analysis::Mode;
 use sudachi::prelude::MorphemeList;
 use sudachi::sentence_splitter::{SentenceSplitter, SplitSentences};
+
+use super::output::{SudachiOutput};
 
 pub struct AnalyzeSplitted<'a, D: DictionaryAccess + 'a> {
     splitter: SentenceSplitter<'a>,

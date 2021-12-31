@@ -13,29 +13,30 @@ use self::exlist::{ExList, ExBuilder};
 
 use rustler::{Env, NifResult};
 
+use once_cell::sync::OnceCell;
+static DICT: OnceCell<JapaneseDictionary> = OnceCell::new();
+
 #[rustler::nif]
-fn rustler_test<'a>(env: Env<'a>, text: &str, print_all: bool) -> NifResult<ExList<'a>> {
+fn analize<'a>(env: Env<'a>, text: &str, put_all: bool, enable_debug: bool) -> NifResult<ExList<'a>> {
+    let dict = DICT.get_or_init(|| {
+        let config = Config::new(
+            None,
+            Some(PathBuf::from(env!("SUDACHI_RESOURCES"))),
+            None
+        )
+        .expect("Failed to load config file");
 
-    let config = Config::new(
-        None, //args.config_file.clone(),
-        None, //args.resource_dir.clone(),
-        Some(PathBuf::from(r"/home/shoz/Sudachi/sudachi_ex/native/sudachi_nif/sudachi-cli/resources/system.dic")),
-    )
-    .expect("Failed to load config file");
+        JapaneseDictionary::from_cfg(&config)
+            .unwrap_or_else(|e| panic!("Failed to create dictionary: {:?}", e))
+    });
 
-    let dict = JapaneseDictionary::from_cfg(&config)
-        .unwrap_or_else(|e| panic!("Failed to create dictionary: {:?}", e));
-
-    let enable_debug = false;
     let mut analyzer = AnalyzeSplitted::new(&dict, Mode::C, enable_debug);
-
-    let mut builder = ExBuilder::new(env, print_all);
-
+    let mut builder  = ExBuilder::new(env, put_all);
     analyzer.analyze(&text, &mut builder);
 
-    Ok(builder.res)
+    Ok(builder.checkout())
 }
 
 rustler::init!("Elixir.Sudachi.NIF", [
-    rustler_test
+    analize
 ]);

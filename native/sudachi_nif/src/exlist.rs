@@ -2,16 +2,16 @@ use sudachi::analysis::morpheme::Morpheme;
 use sudachi::analysis::stateless_tokenizer::DictionaryAccess;
 use sudachi::prelude::{MorphemeList, SudachiResult};
 
-use rustler::{Env, Term, Encoder};
-
 use super::output::{SudachiOutput};
+
+use rustler::{Env, Term, Encoder};
 
 pub type ExList<'a> = Vec<Term<'a>>;
 
 pub struct ExBuilder<'a> {
     print_all: bool,
     env: Env<'a>,
-    pub res: ExList<'a>,
+    res: ExList<'a>,
 }
 impl<'a> ExBuilder<'a> {
     pub fn new(env: Env<'a>, print_all: bool) -> Self {
@@ -21,9 +21,9 @@ impl<'a> ExBuilder<'a> {
             print_all,
         }
     }
-//    pub fn checkout(&self) -> ExList<'a> {
-//        self.res
-//    }
+    pub fn checkout(&self) -> ExList<'a> {
+        self.res.clone()
+    }
 }
 impl<'a, T: DictionaryAccess> SudachiOutput<T> for ExBuilder<'a> {
     fn write(&mut self, morphemes: &MorphemeList<T>) -> SudachiResult<()> {
@@ -37,8 +37,8 @@ impl<'a, T: DictionaryAccess> SudachiOutput<T> for ExBuilder<'a> {
         }
         Ok(())
     }
-
     fn flush(&mut self) {
+        /* empty */
     }
 }
 

@@ -11,5 +11,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rustler = "0.22.2"
+once_cell = "1.9.0"
 
 sudachi = { git = "https://github.com/WorksApplications/sudachi.rs" }

@@ -1,6 +1,24 @@
 defmodule Sudachi do
   @moduledoc """
   sudachi_ex is the Elixir binding of Sudachi, the Japanese morphological analyzer.
+
+  ## Installation
+  
+  the sudachi_ex is installed by adding `sudachi` to your list of dependencies in `mix.exs`:
+  
+  ```elixir
+  def deps do
+    [
+      {:sudachi, "~> 0.1.0"}
+    ]
+  end
+  ```
+  
+  You need to featch a sudachi dictionary:
+  
+  ```shell
+  mix sudachi.fetch_dic
+  ```
   """
 
   alias Sudachi.NIF

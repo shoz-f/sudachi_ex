@@ -37,7 +37,8 @@ defmodule Sudachi.MixProject do
     [
       name: "sudachi",
       licenses: ["Apache-2.0"],
-      links: %{"GitHub" => "https://github.com/shoz-f/sudachi_ex.git"}
+      links: %{"GitHub" => "https://github.com/shoz-f/sudachi_ex.git"},
+      files: ["lib", "priv", "mix.exs", "README*", "LICENSE*", "native"]
     ]
   end
 end
